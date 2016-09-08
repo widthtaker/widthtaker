@@ -1,3 +1,5 @@
+'use strict';
+
 /*!
  * widthtaker.js
  * Version: 0.1.0
@@ -11,13 +13,81 @@
  *
  * *Optional* Add widthtaker-size to space based on this element's size
  */
+(function (window, document) {
+  'use strict';
 
-'use strict';
-
-(function () {
   // TODO: get class for target width
   //       if no class specified, take the width of the container
   // TODO: get class for target elements to be spaced
   //       should contain spans for each row (best way?)
-  // TODO:
-})();
+  // TODO: resize if font-family changed, first load
+  // TODO: resize if screen resize
+
+  function Widthtaker() {
+    var _this = this;
+
+    console.log('widthtaker init');
+    this.resizeText();
+
+    setTimeout(function () {
+      _this.resizeText();
+    }, 1000);
+  }
+
+  Widthtaker.prototype.resizeText = function () {
+    var pEls = document.getElementsByClassName('widthtaker')[0].children,
+        targetWidth = document.getElementsByClassName('widthtaker-size')[0].offsetWidth;
+
+    for (var i = 0; i < pEls.length; i++) {
+      var spanEls = pEls[i].getElementsByTagName('span')[0];
+      this.reset(spanEls);
+
+      var elWidth = spanEls.offsetWidth,
+          charNo = spanEls.innerHTML.length,
+          charWidth = elWidth / charNo,
+          remainingSpace = targetWidth - elWidth,
+          ltrSpacing = remainingSpace / (charNo - 1);
+
+      // let spanStyles = window.getComputedStyle(spanEls[i]);
+
+      console.log('elWidth: ', elWidth);
+      console.log('charNo: ', charNo);
+      console.log('charWidth: ', charWidth);
+      console.log('remainingSpace: ', remainingSpace);
+      console.log('ltrSpacing: ', ltrSpacing);
+
+      spanEls.style.color = 'red';
+      spanEls.style.letterSpacing = ltrSpacing + 'px';
+      //spanEls[i].style.textIndent = ltrSpacing + 'px';
+      spanEls.style.display = 'inline';
+    }
+    console.log('++++++++++++++++++++++++++++++++++');
+  };
+
+  Widthtaker.prototype.reset = function (el) {
+    var elStyles = window.getComputedStyle(el),
+        elDisplay = elStyles.getPropertyValue('display'),
+        elLtrSpacing = elStyles.getPropertyValue('letter-spacing'),
+        elTxtIndent = elStyles.getPropertyValue('text-indent');
+
+    el.style.display = 'inline';
+    el.style.letterSpacing = '0';
+    el.style.textIndent = '0';
+
+    return {
+      'display': elDisplay,
+      'letter-spacing': elLtrSpacing,
+      'text-indent': elTxtIndent
+    };
+  };
+
+  Widthtaker.prototype.createResizeEvent = function () {
+    var ev = document.createEvent('Event');
+
+    ev.initEvent('fontload', true, true);
+
+    return event;
+  };
+
+  var widthtaker = new Widthtaker();
+})(window, document);

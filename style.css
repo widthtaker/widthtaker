@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Open Sans';
+  src: url('OpenSans-ExtraBoldItalic.ttf')  format('truetype');
+}
+
 html, body {
   box-sizing: border-box;
   width: 100%;
@@ -10,9 +15,19 @@ html, body {
 }
 
 .text-box {
+  font-family: 'Open Sans', Arial, sans-serif;
   box-sizing: border-box;
   background: #aaa;
   padding: 5%;
   width: 80%;
   margin: 0 auto;
+}
+
+.text-box p {
+  background-color: aliceblue;
+}
+
+.text-box span {
+  background-color: rebeccapurple;
+  white-space: nowrap;
 }
