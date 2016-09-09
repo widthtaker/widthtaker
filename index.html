@@ -6,22 +6,29 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Widthtaker Demo</title>
 
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&subset=latin-ext" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 
 </head>
 <body>
   <div class="container">
     <div class="text-box">
-      <h1 class="widthtaker widthtaker-size">
-        <p><span>Widthtaker</span></p>
-        <p><span>takes all your</span></p>
-        <p><span>space</span></p>
+      <h1 class="widthtaker">
+        <span>Widthtaker</span>
+        <span>takes all your</span>
+        <span>space</span>
       </h1>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste quidem
         ab sed iusto minus non tenetur quaerat similique enim suscipit fugiat
         nisi, veritatis inventore quae reiciendis natus error. In, deserunt.
       </p>
+      <h3 class="heading">
+        <span>It hopes</span>
+        <span>you don't need it</span>
+        <span>so it takes it away</span>
+        <button class="cta">Click it now</button>
+      </h3>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit.
         Reiciendis qui tempora quis necessitatibus, velit, libero debitis
@@ -32,5 +39,11 @@
   </div>
 
   <script src="dist/widthtaker.js"></script>
+  <script>
+    var elem = document.getElementsByClassName('heading')[0],
+        widthEl = document.getElementsByClassName('cta')[0];
+
+    widthtaker([elem, widthEl]);
+  </script>
 </body>
 </html>

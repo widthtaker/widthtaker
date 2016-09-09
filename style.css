@@ -31,3 +31,19 @@ html, body {
   background-color: rebeccapurple;
   white-space: nowrap;
 }
+
+h3 {
+  font-family: 'Roboto', Arial, sans-serif;
+  font-weight: 900;
+}
+
+.cta {
+  display: block;
+  padding: 5%;
+  width: 50%;
+  background: burlywood;
+  border: none;
+  font-family: 'Open Sans', Arial, sans-serif;
+  font-size: 20px;
+  margin: 10px auto;
+}

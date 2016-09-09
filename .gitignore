@@ -122,3 +122,9 @@ error_log
 
 *.bak
 *.backup
+
+############
+### User ###
+############
+
+.imdone

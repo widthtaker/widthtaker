@@ -5,41 +5,81 @@
  * MIT license
  *
  * Usage:
- *  Include the script in the html, or bower install
+ *  Include the script in the html, or bower install.
  *
- *  Add widthtaker class to the text container you want spaced
+ *  __HTML Classes__
+ *  Add `widthtaker` class to the text container whose text you want spaced.
+ *  The container should have the target width that you want the text to take.
+ *  If you need more control over the target width, use JS.
  *
- * *Optional* Add widthtaker-size to space based on this element's size
+ *  __JS__
+ * If you need more control of the width, you can call the `widthtaker` function
+ * with one or multiple arrays with the element you want spaced on the first
+ * position and the target width element on the second:
+ *
+ * ```
+ * widthtaker([elem, widthEl]);
+ * // or
+ * widthtaker([elem1, widthEl1], [elem2, widthEl2],...);
+ * ```
+ *
  */
-((window, document) => {
+((window, document, globalName) => {
   'use strict';
 
-  // TODO: get class for target width
-  //       if no class specified, take the width of the container
-  // TODO: get class for target elements to be spaced
-  //       should contain spans for each row (best way?)
   // TODO: resize if font-family changed, first load
   // TODO: resize if screen resize
+  // TODO: bower install
+  // TODO: check if jquery or vanilla elements passed
 
-  function  Widthtaker() {
-    console.log('widthtaker init');
-    this.resizeText();
+  var elems = [];
+  init();
 
-    setTimeout(() => {
-      this.resizeText();
-    }, 1000);
+  function init() {
+    getDOMElements();
+    addEventListeners();
   }
 
-  Widthtaker.prototype.resizeText = function() {
-    let pEls = document.getElementsByClassName('widthtaker')[0].children,
-        targetWidth = document.getElementsByClassName('widthtaker-size')[0].offsetWidth;
+  function getDOMElements() {
+    let els = document.getElementsByClassName('widthtaker');
+    console.log('saving DOM elements');
 
-    for (var i = 0; i < pEls.length; i++) {
-      let spanEls = pEls[i].getElementsByTagName('span')[0];
-      this.reset(spanEls);
+    if(els.length > 0) {
+      for (let i = 0; i < els.length; i++) {
+        elems.push([els[i], els[i]]);
+      }
+    }
+    console.log('DOM elems: ', elems);
+  }
 
-      let elWidth = spanEls.offsetWidth,
-          charNo = spanEls.innerHTML.length,
+  function addEventListeners() {
+    window.addEventListener("load", function() {
+      console.log('Assets finished loading, resizing text...');
+      resizeText(elems);
+    });
+
+    // TODO: add debouncer
+    window.addEventListener("resize", function() {
+      console.log('Window resized, resizing text...');
+      resizeText(elems);
+    });
+  }
+
+  function resizeText(elems) {
+    for (let i = 0; i < elems.length; i++) {
+      let contW = elems[i].parentNode.offsetWidth;
+      adjustSpacing(elems[i], contW);
+    }
+  }
+
+  function adjustSpacing(elem, elemW) {
+    let childrenEls = elem.children,
+        targetWidth = elemW.offsetWidth;
+
+    for (var i = 0; i < childrenEls.length; i++) {
+      let oldProperties = reset(childrenEls[i]),
+          elWidth = childrenEls[i].offsetWidth,
+          charNo = childrenEls[i].innerHTML.length,
           charWidth = elWidth / charNo,
           remainingSpace = targetWidth - elWidth,
           ltrSpacing = remainingSpace / (charNo - 1);
@@ -52,15 +92,16 @@
       console.log('remainingSpace: ', remainingSpace);
       console.log('ltrSpacing: ', ltrSpacing);
 
-      spanEls.style.color = 'red';
-      spanEls.style.letterSpacing = ltrSpacing + 'px';
+      childrenEls[i].style.color = 'red';
+      childrenEls[i].style.letterSpacing = ltrSpacing + 'px';
       //spanEls[i].style.textIndent = ltrSpacing + 'px';
-      spanEls.style.display = 'inline';
-    }
-    console.log('++++++++++++++++++++++++++++++++++');
-  };
+      childrenEls[i].style.display = 'inline';
 
-  Widthtaker.prototype.reset = function(el) {
+      console.log('++++++++++++++++++++++++++++++++++');
+    }
+  }
+
+  function reset(el) {
     let elStyles = window.getComputedStyle(el),
         elDisplay = elStyles.getPropertyValue('display'),
         elLtrSpacing = elStyles.getPropertyValue('letter-spacing'),
@@ -75,16 +116,32 @@
       'letter-spacing': elLtrSpacing,
       'text-indent': elTxtIndent
     };
-  };
+  }
 
-  Widthtaker.prototype.createResizeEvent = function() {
+  function createCustomEvent(evName) {
     let ev = document.createEvent('Event');
 
-    ev.initEvent('fontload', true, true);
+    ev.initEvent(evName, true, true);
 
-    return event;
+    return ev;
+  }
+
+  function addEvents(elems, event, eventName, cb) {
+    for (var i = 0; i < elems.length; i++) {
+      elems[i].addEventListener(eventName, () => {
+        cb();
+      }, false);
+
+      elems[i].dispatchEvent(event);
+    }
+  }
+
+  window[globalName] = function() {
+    for (let i = 0; i < arguments.length; i++) {
+      elems.push(arguments[i]);
+    }
+
+    console.log('user elems: ', elems);
   };
 
-  var widthtaker = new Widthtaker();
-
-})(window, document);
+})(window, document, 'widthtaker');
