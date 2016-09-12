@@ -14,16 +14,18 @@
  *  The container should have the target width that you want the text to take.
  *  If you need more control over the target width, use JS.
  *
- *  __JS__
- * If you need more control of the width, you can call the `widthtaker` function
- * with one or multiple arrays with the element you want spaced on the first
- * position and the target width element on the second:
  *
- * ```
- * widthtaker([elem, widthEl]);
- * // or
- * widthtaker([elem1, widthEl1], [elem2, widthEl2],...);
- * ```
+ *
+ *  __JS__
+ *  If you need more control of the width, you can call the `widthtaker` function
+ *  with one or multiple arrays with the element you want spaced on the first
+ *  position and the target width element on the second:
+ *
+ *  ```
+ *  widthtaker([elem, widthEl]);
+ *  // or
+ *  widthtaker([elem1, widthEl1], [elem2, widthEl2],...);
+ *  ```
  *
  */
 (function (window, document, globalName) {
@@ -33,6 +35,8 @@
   // TODO: resize if screen resize
   // TODO: bower install
   // TODO: check if jquery or vanilla elements passed
+  // TODO: don't add negative letter-spacing
+  // TODO: add padding option
 
   var elems = [];
   init();
@@ -60,23 +64,21 @@
       resizeText(elems);
     });
 
-    // TODO: add debouncer
-    window.addEventListener("resize", function () {
+    window.addEventListener("resize", debounce(function () {
       console.log('Window resized, resizing text...');
       resizeText(elems);
-    });
+    }, 500));
   }
 
   function resizeText(elems) {
     for (var i = 0; i < elems.length; i++) {
-      var contW = elems[i].parentNode.offsetWidth;
-      adjustSpacing(elems[i], contW);
+      var contW = elems[i][1].offsetWidth;
+      adjustSpacing(elems[i][0], contW);
     }
   }
 
-  function adjustSpacing(elem, elemW) {
-    var childrenEls = elem.children,
-        targetWidth = elemW.offsetWidth;
+  function adjustSpacing(elem, targetWidth) {
+    var childrenEls = elem.children;
 
     for (var i = 0; i < childrenEls.length; i++) {
       var oldProperties = reset(childrenEls[i]),
@@ -120,22 +122,19 @@
     };
   }
 
-  function createCustomEvent(evName) {
-    var ev = document.createEvent('Event');
+  function debounce(func, wait) {
+    var timeout;
 
-    ev.initEvent(evName, true, true);
-
-    return ev;
-  }
-
-  function addEvents(elems, event, eventName, cb) {
-    for (var i = 0; i < elems.length; i++) {
-      elems[i].addEventListener(eventName, function () {
-        cb();
-      }, false);
-
-      elems[i].dispatchEvent(event);
-    }
+    return function () {
+      var context = this,
+          args = arguments;
+      var later = function later() {
+        timeout = null;
+        func.apply(context, args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
   }
 
   window[globalName] = function () {

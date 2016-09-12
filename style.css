@@ -1,6 +1,11 @@
 @font-face {
   font-family: 'Open Sans';
-  src: url('OpenSans-ExtraBoldItalic.ttf')  format('truetype');
+  src: url('OpenSans-ExtraBoldItalic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Aguafina';
+  src: url('AguafinaScript-Regular.ttf') format('truetype');
 }
 
 html, body {
@@ -17,6 +22,7 @@ html, body {
 .text-box {
   font-family: 'Open Sans', Arial, sans-serif;
   box-sizing: border-box;
+  text-justify: distribute;
   background: #aaa;
   padding: 5%;
   width: 80%;
@@ -30,6 +36,10 @@ html, body {
 .text-box span {
   background-color: rebeccapurple;
   white-space: nowrap;
+}
+
+.text-box span:first-of-type {
+  font-size: 60px;
 }
 
 h3 {

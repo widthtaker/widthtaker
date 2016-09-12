@@ -11,17 +11,19 @@
  *  Add `widthtaker` class to the text container whose text you want spaced.
  *  The container should have the target width that you want the text to take.
  *  If you need more control over the target width, use JS.
+ *  Given that the input could be an italicized font it can overflow the container,
+ *  in that case you can add a manual right padding to get it to fit.
  *
  *  __JS__
- * If you need more control of the width, you can call the `widthtaker` function
- * with one or multiple arrays with the element you want spaced on the first
- * position and the target width element on the second:
+ *  If you need more control of the width, you can call the `widthtaker` function
+ *  with one or multiple arrays with the element you want spaced on the first
+ *  position and the target width element on the second:
  *
- * ```
- * widthtaker([elem, widthEl]);
- * // or
- * widthtaker([elem1, widthEl1], [elem2, widthEl2],...);
- * ```
+ *  ```
+ *  widthtaker([elem, widthEl]);
+ *  // or
+ *  widthtaker([elem1, widthEl1], [elem2, widthEl2],...);
+ *  ```
  *
  */
 ((window, document, globalName) => {
@@ -31,6 +33,9 @@
   // TODO: resize if screen resize
   // TODO: bower install
   // TODO: check if jquery or vanilla elements passed
+  // TODO: don't add negative letter-spacing
+  // TODO: add padding on both sides option
+  // TODO: add padding correct for italic and similar fonts
 
   var elems = [];
   init();
@@ -58,23 +63,21 @@
       resizeText(elems);
     });
 
-    // TODO: add debouncer
-    window.addEventListener("resize", function() {
+    window.addEventListener("resize", debounce(function() {
       console.log('Window resized, resizing text...');
       resizeText(elems);
-    });
+    }, 500));
   }
 
   function resizeText(elems) {
     for (let i = 0; i < elems.length; i++) {
-      let contW = elems[i].parentNode.offsetWidth;
-      adjustSpacing(elems[i], contW);
+      let contW = elems[i][1].offsetWidth;
+      adjustSpacing(elems[i][0], contW);
     }
   }
 
-  function adjustSpacing(elem, elemW) {
-    let childrenEls = elem.children,
-        targetWidth = elemW.offsetWidth;
+  function adjustSpacing(elem, targetWidth) {
+    let childrenEls = elem.children;
 
     for (var i = 0; i < childrenEls.length; i++) {
       let oldProperties = reset(childrenEls[i]),
@@ -118,23 +121,19 @@
     };
   }
 
-  function createCustomEvent(evName) {
-    let ev = document.createEvent('Event');
+  function debounce(func, wait) {
+		var timeout;
 
-    ev.initEvent(evName, true, true);
-
-    return ev;
-  }
-
-  function addEvents(elems, event, eventName, cb) {
-    for (var i = 0; i < elems.length; i++) {
-      elems[i].addEventListener(eventName, () => {
-        cb();
-      }, false);
-
-      elems[i].dispatchEvent(event);
-    }
-  }
+		return function() {
+			var context = this, args = arguments;
+			var later = function() {
+				timeout = null;
+				func.apply(context, args);
+			};
+			clearTimeout(timeout);
+			timeout = setTimeout(later, wait);
+    };
+	}
 
   window[globalName] = function() {
     for (let i = 0; i < arguments.length; i++) {
