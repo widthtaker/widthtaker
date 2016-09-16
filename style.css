@@ -34,7 +34,7 @@ html, body {
 }
 
 .text-box span {
-  background-color: rebeccapurple;
+  display: block;
   white-space: nowrap;
 }
 
